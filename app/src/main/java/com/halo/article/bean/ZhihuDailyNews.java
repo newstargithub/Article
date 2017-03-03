@@ -1,5 +1,6 @@
 package com.halo.article.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class ZhihuDailyNews {
         this.stories = stories;
     }
 
-    public static class StoriesBean {
+    public static class StoriesBean implements Serializable {
         private String ga_prefix;
         private int id;
         private String title;

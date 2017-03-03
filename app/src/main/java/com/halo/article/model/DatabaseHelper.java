@@ -1,5 +1,10 @@
 package com.halo.article.model;
 
+import android.database.Cursor;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
 /**
  * Created by zhouxin on 2016/11/9.
  * Description:
@@ -59,5 +64,24 @@ public class DatabaseHelper {
                 subscriber.onCompleted();
             }
         });
+    }*/
+
+    /*public String getZhihuDaily(int id){
+        Cursor cursor = dbHelper.getReadableDatabase()
+                .query("Zhihu", null, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getInt(cursor.getColumnIndex("zhihu_id")) == id) {
+                    String content = cursor.getString(cursor.getColumnIndex("zhihu_content"));
+                    try {
+                        zhihuDailyStory = new Gson().fromJson(content, ZhihuDailyStory.class);
+                    } catch (JsonSyntaxException e) {
+                        view.showResult(content);
+                    }
+                    view.showResult(convertZhihuContent(zhihuDailyStory.getBody()));
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
     }*/
 }

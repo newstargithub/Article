@@ -2,6 +2,8 @@ package com.halo.article.util;
 
 import android.content.Context;
 
+import com.halo.article.app.App;
+
 /**
  * <pre>
  *     author: Blankj
@@ -33,7 +35,11 @@ public class Utils {
      * @return ApplicationContext
      */
     public static Context getContext() {
-        if (context != null) return context;
-        throw new NullPointerException("u should init first");
+        if (context != null) {
+            return context;
+        } else {
+            return App.getContext();
+        }
+//        throw new NullPointerException("u should init first");
     }
 }

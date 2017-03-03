@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import com.apkfuns.logutils.LogUtils;
+
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -13,19 +15,19 @@ import org.greenrobot.eventbus.EventBus;
  * Description: Fragment基类
  */
 
-public abstract class BaseFragment<V extends BaseView, P extends AbstractPresenter<V>> extends Fragment {
+public abstract class BaseFragment<V extends BaseView, P extends BasePresenter<V>> extends Fragment implements BaseView<P>{
 
     protected P mPresenter;
-    protected boolean firstLoad = true;
-    protected boolean prepared = false;
-    protected boolean visible = false;
+    private boolean firstLoad = true;
+    private boolean prepared = false;
+    private boolean visible = false;
     protected Context mContext;
 
-    /**
-     * 创建Presenter
-     * @return  Presenter
-     */
-    protected abstract P createPresenter();
+    @Override
+    public void setPresenter(P presenter) {
+        mPresenter = presenter;
+        LogUtils.e("setPresenter");
+    }
 
     /**
      * 初始化View和事件
@@ -34,9 +36,20 @@ public abstract class BaseFragment<V extends BaseView, P extends AbstractPresent
     protected abstract void initViews(View view);
 
     /**
+     * 加载数据
+     * @param pullToRefresh true 下拉刷新触发
+     */
+    protected abstract void initData(boolean pullToRefresh);
+
+    /**
      * @return  是否注册事件
      */
     protected abstract boolean isRegisterEvent();
+
+    /**
+     * @return  是否懒加载
+     */
+    protected abstract boolean isLazyLoad();
 
     @Override
     public void onAttach(Context context) {
@@ -47,7 +60,7 @@ public abstract class BaseFragment<V extends BaseView, P extends AbstractPresent
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = createPresenter();
+
         initArguments();
         if(isRegisterEvent()) {
             registerEvent();
@@ -58,8 +71,19 @@ public abstract class BaseFragment<V extends BaseView, P extends AbstractPresent
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         prepared = true;
-        lazyLoad();
+        if(isLazyLoad()) {
+            lazyLoad();
+        } else {
+            firstLoad = false;
+            LogUtils.e("initData");
+            initData(false);
+        }
     }
 
     @Override
@@ -88,15 +112,10 @@ public abstract class BaseFragment<V extends BaseView, P extends AbstractPresent
     private void lazyLoad() {
         if (visible && firstLoad && prepared) {
             firstLoad = false;
+            LogUtils.e("initData");
             initData(false);
         }
     }
-
-    /**
-     * 加载数据
-     * @param pullToRefresh true 下拉刷新触发
-     */
-    protected abstract void initData(boolean pullToRefresh);
 
     /**
      * 注册事件

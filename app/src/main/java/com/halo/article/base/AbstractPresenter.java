@@ -11,7 +11,7 @@ import android.content.Context;
  * 使得Activity对象无法被回收，此时发生内存泄漏
  * 建立Presenter抽象使用Activity，Fragment的生命周期来解决这个问题
  */
-public abstract class AbstractPresenter<V> implements BasePresenter{
+public abstract class AbstractPresenter<V> implements BasePresenter<V>{
 
     protected Context mContext;
 
@@ -21,12 +21,13 @@ public abstract class AbstractPresenter<V> implements BasePresenter{
     }
 
     //View接口类型
-    private V mView;
+    protected V mView;
 
     /**
      * 与View建立关联
      * @param view  实现了某个特定接口的Activity或者Fragment类型
      */
+    @Override
     public void attachView(V view) {
         mView = view;
     }
@@ -35,6 +36,7 @@ public abstract class AbstractPresenter<V> implements BasePresenter{
      * 获取View
      * @return
      */
+    @Override
     public V getView() {
         return mView;
     }
@@ -43,6 +45,7 @@ public abstract class AbstractPresenter<V> implements BasePresenter{
      * 判断是否与View建立了关联
      * @return boolean
      */
+    @Override
     public boolean isViewAttached() {
         return mView != null;
     }
@@ -50,6 +53,7 @@ public abstract class AbstractPresenter<V> implements BasePresenter{
     /**
      * 与View解除关联
      */
+    @Override
     public void detachView() {
         mView = null;
         mContext = null;

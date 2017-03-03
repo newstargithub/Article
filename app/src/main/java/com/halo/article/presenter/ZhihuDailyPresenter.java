@@ -27,6 +27,7 @@ public class ZhihuDailyPresenter extends AbstractPresenter<ZhihuDailyContract.Vi
 
     public ZhihuDailyPresenter(Context context, ZhihuDailyContract.View v) {
         super(context, v);
+        v.setPresenter(this);
         mDataManager = DataManager.getInstance();
     }
 

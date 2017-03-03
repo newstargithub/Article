@@ -5,8 +5,16 @@ package com.halo.article.base;
  * Description: 接口
  */
 
-public interface BasePresenter {
+public interface BasePresenter<V> {
     // 获取数据并改变界面显示，在todo-mvp的项目中的调用时机为Fragment的OnResume()方法中
     void start();
+
+    void attachView(V view);
+
+    void detachView();
+
+    V getView();
+
+    boolean isViewAttached();
 
 }

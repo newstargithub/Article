@@ -5,6 +5,8 @@ package com.halo.article.base;
  * Description: View基础操作
  */
 
-public interface BaseView {
+public interface BaseView<T> {
+
+    void setPresenter(T presenter);
 
 }

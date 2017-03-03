@@ -1,8 +1,8 @@
 package com.halo.article.ui.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -21,7 +21,7 @@ import com.halo.article.adapter.ZhihuDailyAdapter;
 import com.halo.article.base.BaseFragment;
 import com.halo.article.bean.ZhihuDailyNews;
 import com.halo.article.presenter.ZhihuDailyContract;
-import com.halo.article.presenter.ZhihuDailyPresenter;
+import com.halo.article.ui.activity.DetailActivity;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
  * Use the {@link ZhihuDailyFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, ZhihuDailyPresenter> implements ZhihuDailyContract.View {
+public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, ZhihuDailyContract.Presenter> implements ZhihuDailyContract.View {
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -59,12 +59,12 @@ public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, Zh
     }
 
     @Override
-    protected ZhihuDailyPresenter createPresenter() {
-        return new ZhihuDailyPresenter(getActivity(), this);
+    protected boolean isRegisterEvent() {
+        return false;
     }
 
     @Override
-    protected boolean isRegisterEvent() {
+    protected boolean isLazyLoad() {
         return false;
     }
 
@@ -103,7 +103,10 @@ public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, Zh
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void SimpleOnItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                showError();
+//                Intent intent = new Intent(mContext, ScrollingActivity.class);
+                ZhihuDailyNews.StoriesBean item = mAdapter.getItem(i);
+                Intent intent = DetailActivity.newIntent(mContext, item);
+                startActivity(intent);
             }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -135,12 +138,6 @@ public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, Zh
 
     @Override
     protected void initData(boolean pullToRefresh) {
-        mPresenter.start();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         mPresenter.start();
     }
 

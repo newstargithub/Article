@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.halo.article.presenter.ZhihuDailyPresenter;
 import com.halo.article.ui.fragment.ZhihuDailyFragment;
 import com.halo.article.util.ActivityUtils;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity
     private ZhihuDailyFragment mainFragment;
     private String Zhihu_Daily_Fragment_Tag = "";
     private ZhihuDailyFragment bookmarksFragment;
+    private ZhihuDailyPresenter mZhihuDailyPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private void showMainFragment() {
         if(mainFragment == null) {
             mainFragment = ZhihuDailyFragment.newInstance();
+            mZhihuDailyPresenter = new ZhihuDailyPresenter(getApplicationContext(), mainFragment);
         }
         ActivityUtils.replaceFragmentToActivity(getSupportFragmentManager(), mainFragment, R.id.frame_layout, Zhihu_Daily_Fragment_Tag);
         toolbar.setTitle(getResources().getString(R.string.zhihu_daily));
