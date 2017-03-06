@@ -9,7 +9,7 @@ import retrofit2.http.Path;
 
 /**
  * Created by zx on 2016/11/10.
- * Description: 知乎接口
+ * Description: 执行访问REST API 知乎接口
  */
 public interface ZhihuApi {
 

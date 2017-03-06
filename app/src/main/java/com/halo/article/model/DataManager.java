@@ -60,4 +60,23 @@ public class DataManager {
         call.enqueue(callback);
     }
 
+    public String getCacheNewsDetail(int id) {
+        return mDatabaseHelper.getZhihuDaily(id);
+    }
+
+    public void saveNews(ZhihuDailyNews.StoriesBean item) {
+        mDatabaseHelper.saveNews(item);
+    }
+
+    public void saveNewsDetail(ZhihuDailyNews.StoriesBean item, ZhihuNewsDetail detail) {
+        mDatabaseHelper.saveNewsDetail(item, detail);
+    }
+
+    public boolean queryIfIsBookmarked(int id) {
+        return mDatabaseHelper.queryIfIsBookmarked(id);
+    }
+
+    public void addToOrDeleteFromBookmarks(int id) {
+        mDatabaseHelper.addToOrDeleteFromBookmarks(id);
+    }
 }

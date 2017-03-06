@@ -40,10 +40,15 @@ public class ZhihuDailyPresenter extends AbstractPresenter<ZhihuDailyContract.Vi
                 ZhihuDailyNews dailyNews = response.body();
                 if(isViewAttached()) {
                     getView().stopLoading();
-                    if(clear) {
-                        mList.clear();
+                    if(dailyNews != null && dailyNews.getStories() != null) {
+                        for(ZhihuDailyNews.StoriesBean item : dailyNews.getStories()) {
+                            item.date = dailyNews.getDate();
+                        }
+                        if(clear) {
+                            mList.clear();
+                        }
+                        mList.addAll(dailyNews.getStories());
                     }
-                    mList.addAll(dailyNews.getStories());
                     getView().showResults(mList);
                 }
             }
@@ -76,6 +81,11 @@ public class ZhihuDailyPresenter extends AbstractPresenter<ZhihuDailyContract.Vi
     @Override
     public void feelLucky() {
 
+    }
+
+    @Override
+    public void saveNews(ZhihuDailyNews.StoriesBean item) {
+        mDataManager.saveNews(item);
     }
 
     @Override

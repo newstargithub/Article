@@ -36,5 +36,7 @@ public interface ZhihuDailyContract {
         void startReading(int position);
         // 随便看看
         void feelLucky();
+
+        void saveNews(ZhihuDailyNews.StoriesBean item);
     }
 }

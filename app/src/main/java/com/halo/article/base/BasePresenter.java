@@ -11,6 +11,9 @@ public interface BasePresenter<V> {
 
     void attachView(V view);
 
+    /**
+     * 页面销毁，与View分离
+     */
     void detachView();
 
     V getView();

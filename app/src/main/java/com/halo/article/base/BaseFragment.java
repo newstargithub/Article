@@ -2,6 +2,7 @@ package com.halo.article.base;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -15,18 +16,17 @@ import org.greenrobot.eventbus.EventBus;
  * Description: Fragment基类
  */
 
-public abstract class BaseFragment<V extends BaseView, P extends BasePresenter<V>> extends Fragment implements BaseView<P>{
+public abstract class BaseFragment extends Fragment {
 
-    protected P mPresenter;
+    private BasePresenter mPresenter;
     private boolean firstLoad = true;
     private boolean prepared = false;
     private boolean visible = false;
     protected Context mContext;
 
-    @Override
-    public void setPresenter(P presenter) {
+    protected void setBasePresenter(BasePresenter presenter) {
         mPresenter = presenter;
-        LogUtils.e("setPresenter");
+        LogUtils.e("setBasePresenter");
     }
 
     /**
@@ -99,7 +99,9 @@ public abstract class BaseFragment<V extends BaseView, P extends BasePresenter<V
         if(isRegisterEvent()) {
             unregisterEvent();
         }
-        mPresenter.detachView();
+        if(mPresenter != null) {
+            mPresenter.detachView();
+        }
     }
 
     protected void initArguments() {

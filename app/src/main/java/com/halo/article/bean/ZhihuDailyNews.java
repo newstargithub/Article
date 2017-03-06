@@ -44,6 +44,7 @@ public class ZhihuDailyNews {
     }
 
     public static class StoriesBean implements Serializable {
+        public String date;
         private String ga_prefix;
         private int id;
         private String title;

@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
  * Use the {@link ZhihuDailyFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, ZhihuDailyContract.Presenter> implements ZhihuDailyContract.View {
+public class ZhihuDailyFragment extends BaseFragment implements ZhihuDailyContract.View {
 
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
@@ -46,6 +46,7 @@ public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, Zh
     private int mYear = Calendar.getInstance().get(Calendar.YEAR);
     private int mMonth = Calendar.getInstance().get(Calendar.MONTH);
     private int mDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    private ZhihuDailyContract.Presenter mPresenter;
 
     public ZhihuDailyFragment() {
         // Required empty public constructor
@@ -103,8 +104,8 @@ public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, Zh
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void SimpleOnItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-//                Intent intent = new Intent(mContext, ScrollingActivity.class);
                 ZhihuDailyNews.StoriesBean item = mAdapter.getItem(i);
+                mPresenter.saveNews(item);
                 Intent intent = DetailActivity.newIntent(mContext, item);
                 startActivity(intent);
             }
@@ -211,5 +212,11 @@ public class ZhihuDailyFragment extends BaseFragment<ZhihuDailyContract.View, Zh
         dialog.vibrate(false);
 
         dialog.show(getActivity().getFragmentManager(), "DatePickerDialog");
+    }
+
+    @Override
+    public void setPresenter(ZhihuDailyContract.Presenter presenter) {
+        super.setBasePresenter(presenter);
+        mPresenter = presenter;
     }
 }
