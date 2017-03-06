@@ -24,10 +24,22 @@ public class ActivityUtils {
     }
 
     public static void addFragmentToActivity (@NonNull FragmentManager fragmentManager,
-                                              @NonNull Fragment fragment, String tag) {
+                                              @NonNull Fragment fragment, int frameId, String tag) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(fragment, tag);
+        transaction.add(frameId, fragment, tag);
         transaction.commit();
+    }
+
+    public static void showFragmentToActivity (@NonNull FragmentManager fragmentManager,
+                                              @NonNull Fragment fragmentShow, Fragment... fragmentHides) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.show(fragmentShow);
+        if(fragmentHides != null) {
+            for (Fragment fragment : fragmentHides) {
+                fragmentTransaction.hide(fragment);
+            }
+        }
+        fragmentTransaction.commit();
     }
 
     public static void replaceFragmentToActivity (@NonNull FragmentManager fragmentManager,

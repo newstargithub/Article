@@ -5,6 +5,8 @@ import com.halo.article.bean.ZhihuDailyNews;
 import com.halo.article.bean.ZhihuNewsDetail;
 import com.halo.article.util.LoggerInterceptor;
 
+import java.util.List;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,5 +80,9 @@ public class DataManager {
 
     public void addToOrDeleteFromBookmarks(int id) {
         mDatabaseHelper.addToOrDeleteFromBookmarks(id);
+    }
+
+    public List<ZhihuDailyNews.StoriesBean> getBookmarks() {
+        return mDatabaseHelper.getBookmarks();
     }
 }

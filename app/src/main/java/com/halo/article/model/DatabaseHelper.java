@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.halo.article.app.App;
 import com.halo.article.bean.ZhihuDailyNews;
 import com.halo.article.bean.ZhihuNewsDetail;
@@ -12,7 +13,9 @@ import com.halo.article.model.HistoryDatabaseHelper.ZhihuColumns;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -200,5 +203,29 @@ public class DatabaseHelper {
         values.put(ZhihuColumns.BOOKMARK, isBookmarked ? 0 : 1);
         db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, selection, selectionArgs);
         values.clear();
+    }
+
+    public List<ZhihuDailyNews.StoriesBean> getBookmarks() {
+        List<ZhihuDailyNews.StoriesBean> list = new ArrayList<>();
+        String news;
+        ZhihuDailyNews.StoriesBean storiesBean;
+        SQLiteDatabase db = getReadableDatabase();
+        String selection = ZhihuColumns.BOOKMARK + " = ?";
+        String[] selectionArgs = {"1"};
+        Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
+        if(cursor.moveToFirst()) {
+            do {
+                try {
+                    news = cursor.getString(cursor.getColumnIndex(ZhihuColumns.NEWS));
+                    storiesBean = new Gson().fromJson(news, ZhihuDailyNews.StoriesBean.class);
+                    list.add(storiesBean);
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+                    //ignore
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
     }
 }
