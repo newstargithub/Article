@@ -82,105 +82,140 @@ public class DatabaseHelper {
 
     public String getZhihuDaily(int id) {
         String content = null;
-        Cursor cursor = getReadableDatabase()
-                .query(HistoryDatabaseHelper.TABLE_ZHIHU, null, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                if (cursor.getInt(cursor.getColumnIndex(ZhihuColumns.ZHIHU_ID)) == id) {
-                    content = cursor.getString(cursor.getColumnIndex(ZhihuColumns.CONTENT));
-                    break;
-                }
-            } while (cursor.moveToNext());
+        SQLiteDatabase db = null;
+        try{
+            db = getReadableDatabase();
+            Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, null, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    if (cursor.getInt(cursor.getColumnIndex(ZhihuColumns.ZHIHU_ID)) == id) {
+                        content = cursor.getString(cursor.getColumnIndex(ZhihuColumns.CONTENT));
+                        break;
+                    }
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } finally {
+            if(db != null) {
+                db.close();
+            }
         }
-        cursor.close();
         return content;
     }
 
     public void saveNews(ZhihuDailyNews.StoriesBean item) {
         Gson gson = new Gson();
-        SQLiteDatabase db = getWritableDatabase();
-        int id = item.getId();
-        boolean ifIDExists = queryIfIDExists(id);
-        if(ifIDExists) {
-            ContentValues values = new ContentValues();
-            values.put(ZhihuColumns.NEWS, gson.toJson(item));
-            db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, ZhihuColumns.ZHIHU_ID + " = ?", new String[] {String.valueOf(id)});
-            values.clear();
-        } else {
-            db.beginTransaction();
-            try {
-                DateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                Date date = format.parse(item.date);
+        SQLiteDatabase db = null;
+        try{
+            db = getWritableDatabase();
+            int id = item.getId();
+            boolean ifIDExists = queryIfIDExists(id);
+            if(ifIDExists) {
                 ContentValues values = new ContentValues();
-                values.put(ZhihuColumns.ZHIHU_ID, id);
                 values.put(ZhihuColumns.NEWS, gson.toJson(item));
-                values.put(ZhihuColumns.TIME, date.getTime() / 1000);
-                db.insert(HistoryDatabaseHelper.TABLE_ZHIHU, null, values);
+                db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, ZhihuColumns.ZHIHU_ID + " = ?", new String[] {String.valueOf(id)});
                 values.clear();
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                db.endTransaction();
+            } else {
+                db.beginTransaction();
+                try {
+                    DateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                    Date date = format.parse(item.date);
+                    ContentValues values = new ContentValues();
+                    values.put(ZhihuColumns.ZHIHU_ID, id);
+                    values.put(ZhihuColumns.NEWS, gson.toJson(item));
+                    values.put(ZhihuColumns.TIME, date.getTime() / 1000);
+                    db.insert(HistoryDatabaseHelper.TABLE_ZHIHU, null, values);
+                    values.clear();
+                    db.setTransactionSuccessful();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+        } finally {
+            if(db != null) {
+                db.close();
             }
         }
     }
 
     public void saveNewsDetail(ZhihuDailyNews.StoriesBean item, ZhihuNewsDetail detail) {
-        Gson gson = new Gson();
-        SQLiteDatabase db = getWritableDatabase();
-        int id = item.getId();
-        boolean ifIDExists = queryIfIDExists(id);
-        if(ifIDExists) {
-            ContentValues values = new ContentValues();
-            values.put(ZhihuColumns.CONTENT, gson.toJson(detail));
-            db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, ZhihuColumns.ZHIHU_ID + " = ?", new String[] {String.valueOf(id)});
-            values.clear();
-        } else {
-            db.beginTransaction();
-            try {
-                DateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-                Date date = format.parse(item.date);
+        SQLiteDatabase db = null;
+        try{
+            Gson gson = new Gson();
+            db = getWritableDatabase();
+            int id = item.getId();
+            boolean ifIDExists = queryIfIDExists(id);
+            if(ifIDExists) {
                 ContentValues values = new ContentValues();
-                values.put(ZhihuColumns.ZHIHU_ID, id);
-                values.put(ZhihuColumns.NEWS, gson.toJson(item));
                 values.put(ZhihuColumns.CONTENT, gson.toJson(detail));
-                values.put(ZhihuColumns.TIME, date.getTime() / 1000);
-                db.insert(HistoryDatabaseHelper.TABLE_ZHIHU, null, values);
+                db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, ZhihuColumns.ZHIHU_ID + " = ?", new String[] {String.valueOf(id)});
                 values.clear();
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                db.endTransaction();
+            } else {
+                db.beginTransaction();
+                try {
+                    DateFormat format = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+                    Date date = format.parse(item.date);
+                    ContentValues values = new ContentValues();
+                    values.put(ZhihuColumns.ZHIHU_ID, id);
+                    values.put(ZhihuColumns.NEWS, gson.toJson(item));
+                    values.put(ZhihuColumns.CONTENT, gson.toJson(detail));
+                    values.put(ZhihuColumns.TIME, date.getTime() / 1000);
+                    db.insert(HistoryDatabaseHelper.TABLE_ZHIHU, null, values);
+                    values.clear();
+                    db.setTransactionSuccessful();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+        } finally {
+            if(db != null) {
+                db.close();
             }
         }
     }
 
     private boolean queryIfIDExists(int id){
         boolean isExist = false;
-        SQLiteDatabase db = getReadableDatabase();
-        String selection = ZhihuColumns.ZHIHU_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
-        if (cursor.moveToFirst()){
-            isExist = true;
+        SQLiteDatabase db = null;
+        try{
+            db = getReadableDatabase();
+            String selection = ZhihuColumns.ZHIHU_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(id)};
+            Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
+            if (cursor.moveToFirst()){
+                isExist = true;
+            }
+            cursor.close();
+        } finally {
+            if(db != null) {
+                db.close();
+            }
         }
-        cursor.close();
         return isExist;
     }
 
     public boolean queryIfIsBookmarked(int id) {
         boolean isBookmarked = false;
-        SQLiteDatabase db = getReadableDatabase();
-        String selection = ZhihuColumns.ZHIHU_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
-        if (cursor.moveToFirst()) {
-            int bookMark = cursor.getInt(cursor.getColumnIndex(ZhihuColumns.BOOKMARK));
-            isBookmarked = bookMark != 0;
+        SQLiteDatabase db = null;
+        try{
+            db = getReadableDatabase();
+            String selection = ZhihuColumns.ZHIHU_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(id)};
+            Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
+            if (cursor.moveToFirst()) {
+                int bookMark = cursor.getInt(cursor.getColumnIndex(ZhihuColumns.BOOKMARK));
+                isBookmarked = bookMark != 0;
+            }
+            cursor.close();
+        } finally {
+            if(db != null) {
+                db.close();
+            }
         }
-        cursor.close();
         return isBookmarked;
     }
 
@@ -196,36 +231,50 @@ public class DatabaseHelper {
 
     public void addToOrDeleteFromBookmarks(int id) {
         boolean isBookmarked = queryIfIsBookmarked(id);
-        SQLiteDatabase db = getWritableDatabase();
-        String selection = ZhihuColumns.ZHIHU_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(id)};
-        ContentValues values = new ContentValues();
-        values.put(ZhihuColumns.BOOKMARK, isBookmarked ? 0 : 1);
-        db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, selection, selectionArgs);
-        values.clear();
+        SQLiteDatabase db = null;
+        try{
+            db = getWritableDatabase();
+            String selection = ZhihuColumns.ZHIHU_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(id)};
+            ContentValues values = new ContentValues();
+            values.put(ZhihuColumns.BOOKMARK, isBookmarked ? 0 : 1);
+            db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, selection, selectionArgs);
+            values.clear();
+        } finally {
+            if(db != null) {
+                db.close();
+            }
+        }
     }
 
     public List<ZhihuDailyNews.StoriesBean> getBookmarks() {
         List<ZhihuDailyNews.StoriesBean> list = new ArrayList<>();
-        String news;
-        ZhihuDailyNews.StoriesBean storiesBean;
-        SQLiteDatabase db = getReadableDatabase();
-        String selection = ZhihuColumns.BOOKMARK + " = ?";
-        String[] selectionArgs = {"1"};
-        Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
-        if(cursor.moveToFirst()) {
-            do {
-                try {
-                    news = cursor.getString(cursor.getColumnIndex(ZhihuColumns.NEWS));
-                    storiesBean = new Gson().fromJson(news, ZhihuDailyNews.StoriesBean.class);
-                    list.add(storiesBean);
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
-                    //ignore
-                }
-            } while (cursor.moveToNext());
+        SQLiteDatabase db = null;
+        try{
+            String news;
+            ZhihuDailyNews.StoriesBean storiesBean;
+            db = getReadableDatabase();
+            String selection = ZhihuColumns.BOOKMARK + " = ?";
+            String[] selectionArgs = {"1"};
+            Cursor cursor = db.query(HistoryDatabaseHelper.TABLE_ZHIHU, null, selection, selectionArgs, null, null, null);
+            if(cursor.moveToFirst()) {
+                do {
+                    try {
+                        news = cursor.getString(cursor.getColumnIndex(ZhihuColumns.NEWS));
+                        storiesBean = new Gson().fromJson(news, ZhihuDailyNews.StoriesBean.class);
+                        list.add(storiesBean);
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
+                        //ignore
+                    }
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } finally {
+            if(db != null) {
+                db.close();
+            }
         }
-        cursor.close();
         return list;
     }
 }
