@@ -1,2 +1,2 @@
 # Article
-https://github.com/newstargithub/Article/blob/master/list.png
+![列表截图](/list.png)
