@@ -1,4 +1,5 @@
 # Article
 精选文章阅读
-![列表截图](/screenshot_list.png)
-![详情截图](/screenshot_detail.png)
+
+<img src="./screenshot_list.png" width = "180" height = "320" alt="列表" align=center />
+<img src="./screenshot_detail.png" width = "180" height = "320" alt="详情" align=center />
