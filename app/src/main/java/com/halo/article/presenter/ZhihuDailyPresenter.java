@@ -47,6 +47,10 @@ public class ZhihuDailyPresenter extends AbstractPresenter<ZhihuDailyContract.Vi
                         if(clear) {
                             mList.clear();
                         }
+                        ZhihuDailyNews.StoriesBean bean = new ZhihuDailyNews.StoriesBean();
+                        bean.date = dailyNews.getDate();
+                        bean.itemType = ZhihuDailyNews.StoriesBean.ITEM_TYPE_HEADER;
+                        mList.add(bean);
                         mList.addAll(dailyNews.getStories());
                     }
                     getView().showResults(mList);

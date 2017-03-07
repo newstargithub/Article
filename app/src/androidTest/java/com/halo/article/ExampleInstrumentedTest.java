@@ -4,8 +4,14 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.apkfuns.logutils.LogUtils;
+import com.halo.article.bean.ZhihuDailyNews;
+import com.halo.article.model.DataManager;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -22,5 +28,12 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.halo.article", appContext.getPackageName());
+    }
+
+    @Test
+    public void testCache() {
+        DataManager instance = DataManager.getInstance();
+        List<ZhihuDailyNews.StoriesBean> bookmarks = instance.getBookmarks();
+        LogUtils.d(bookmarks);
     }
 }

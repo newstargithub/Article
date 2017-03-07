@@ -76,11 +76,16 @@ public class MainActivity extends AppCompatActivity
     private void showBookmarksFragment() {
         ActivityUtils.showFragmentToActivity(getSupportFragmentManager(), bookmarksFragment, mainFragment);
         toolbar.setTitle(getResources().getString(R.string.nav_bookmarks));
+        mFab.hide();
+        if (bookmarksFragment.isAdded()) {
+            bookmarksFragment.notifyDataChanged();
+        }
     }
 
     private void showMainFragment() {
         ActivityUtils.showFragmentToActivity(getSupportFragmentManager(), mainFragment, bookmarksFragment);
         toolbar.setTitle(getResources().getString(R.string.zhihu_daily));
+        mFab.show();
     }
 
     private void initViews() {

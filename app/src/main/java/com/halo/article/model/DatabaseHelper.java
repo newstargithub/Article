@@ -101,7 +101,7 @@ public class DatabaseHelper {
         SQLiteDatabase db = getWritableDatabase();
         int id = item.getId();
         boolean ifIDExists = queryIfIDExists(id);
-        if(!ifIDExists) {
+        if(ifIDExists) {
             ContentValues values = new ContentValues();
             values.put(ZhihuColumns.NEWS, gson.toJson(item));
             db.update(HistoryDatabaseHelper.TABLE_ZHIHU, values, ZhihuColumns.ZHIHU_ID + " = ?", new String[] {String.valueOf(id)});

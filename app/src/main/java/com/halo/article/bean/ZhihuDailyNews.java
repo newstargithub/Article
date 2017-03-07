@@ -1,5 +1,7 @@
 package com.halo.article.bean;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -43,13 +45,19 @@ public class ZhihuDailyNews {
         this.stories = stories;
     }
 
-    public static class StoriesBean implements Serializable {
+    public static class StoriesBean implements Serializable, MultiItemEntity {
+        public static final int ITEM = 0;
+        public static final int ITEM_TYPE_HEADER = 1;
+
         public String date;
         private String ga_prefix;
         private int id;
         private String title;
         private int type;
         private List<String> images;
+
+        //区分item
+        public int itemType = ITEM;
 
         public String getGa_prefix() {
             return ga_prefix;
@@ -89,6 +97,11 @@ public class ZhihuDailyNews {
 
         public void setImages(List<String> images) {
             this.images = images;
+        }
+
+        @Override
+        public int getItemType() {
+            return itemType;
         }
     }
 }
